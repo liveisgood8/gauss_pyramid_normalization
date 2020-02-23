@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include <math.h>
-#include <chrono>
 
 #define TIMED_FUNCTION(func) \
   { \
