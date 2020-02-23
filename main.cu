@@ -1,14 +1,15 @@
 #include "main.cuh"
 
-#include <stdio.h>
 #include <time.h>
 #include <cuda_runtime.h>
 
 #include "gpu.cuh"
 #include "test.cuh"
 
-#define CUDA_BLOCKS 8
-#define CUDA_THREADS_PER_BLOCK 16
+#define CUDA_BLOCKS 256
+#define CUDA_THREADS_PER_BLOCK 256
+
+FILE *output_file = stdout;
 
 int* make_host_array(size_t rows, size_t columns, int* real_max) {
 	const size_t size = rows * columns;
@@ -78,9 +79,9 @@ void copy_dev_max_to_host(const int *dev_max, int *host_max) {
 void print_host_array(const int *arr, size_t rows, size_t columns) {
 	for (size_t i = 0; i < rows; i++) {
 		for (size_t j = 0; j < columns; j++) {
-			printf("%d,", *(arr + i * columns + j));
+			fprintf(output_file, "%d,", *(arr + i * columns + j));
 		}
-		printf("\n");
+		fprintf(output_file, "\n");
 	}
 }
 
@@ -90,7 +91,7 @@ void print_host_gauss_piramid(int **arrays, size_t base_rows, size_t base_column
 		print_host_array(arrays[i], base_rows, base_columns);
 		base_rows /= 2;
 		base_columns /= 2;
-		printf("---\n");
+		fprintf(output_file, "---\n");
 	}
 }
 
@@ -154,6 +155,14 @@ void divide_gauss_pyramid_on_dev(int **arrays, size_t base_rows, size_t base_col
 	}
 }
 
+void open_report_file() {
+	if ((output_file = fopen("output.txt", "w")) == 0) {
+		output_file = stdout;
+		fprintf(output_file, "cannot open output file, printf to stdout");
+	}
+}
+
 int main() {
+	open_report_file();
 	run_tests();
 }

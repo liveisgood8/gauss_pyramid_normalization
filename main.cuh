@@ -2,6 +2,9 @@
 #define MAIN
 
 #include <stddef.h>
+#include <stdio.h>
+
+extern FILE *output_file;
 
 int* make_host_array(size_t rows, size_t columns, int* real_max = nullptr);
 
