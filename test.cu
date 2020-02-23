@@ -49,7 +49,11 @@ void test_alg(size_t base_rows, size_t base_columns,
   }
 
 	int pyramid_max = find_gauss_pyramid_max_on_dev(arr_pyramid, base_rows, base_columns, 
-		number_of_pyramids);
+    number_of_pyramids);
+  
+  if (isMatrixOutputEnabled) {
+    fprintf(output_file, "max element: %d\n", pyramid_max);
+  }
     
   divide_gauss_pyramid_on_dev(arr_pyramid, base_rows, base_columns, 
     number_of_pyramids, pyramid_max);
