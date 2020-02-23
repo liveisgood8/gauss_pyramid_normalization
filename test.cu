@@ -10,11 +10,13 @@
     func; \
     end = clock(); \
     double time_taken = double(end - start) / double(CLOCKS_PER_SEC); \
-    printf(#func " finished in %lf seconds\n", time_taken); \
+    fprintf(output_file, #func " finished in %lf seconds\n", time_taken); \
   }
 
+bool isMatrixOutputEnabled = false;
+
 void test_gauss_pyramid_max() {
-  printf("* test_gauss_pyramid_max calculated on host and device\n");
+  fprintf(output_file, "* test_gauss_pyramid_max calculated on host and device\n");
 
   const size_t base_rows = (size_t)pow(2, 8);
   const size_t base_columns = (size_t)pow(2, 8);
@@ -30,7 +32,7 @@ void test_gauss_pyramid_max() {
     free_gauss_pyramid(arr_pyramid, number_of_pyramids);
 
     if (real_pyramid_max != pyramid_max) {
-      printf("test_gauss_pyramid_max failed\n");
+      fprintf(output_file, "!!! test_gauss_pyramid_max failed\n");
       break;
     }
   }
@@ -38,14 +40,23 @@ void test_gauss_pyramid_max() {
 
 void test_alg(size_t base_rows, size_t base_columns, 
   size_t number_of_pyramids, const char *test_name) {
-  printf("* %s\n", test_name);
-	int **arr_pyramid = make_gauss_pyramid(base_rows, base_columns, number_of_pyramids);
+    fprintf(output_file, "* %s\n", test_name);
+
+  int **arr_pyramid = make_gauss_pyramid(base_rows, base_columns, number_of_pyramids);
+  fprintf(output_file, "--- before ---\n");
+  if (isMatrixOutputEnabled) {
+    print_host_gauss_piramid(arr_pyramid, base_rows, base_columns, number_of_pyramids);
+  }
 
 	int pyramid_max = find_gauss_pyramid_max_on_dev(arr_pyramid, base_rows, base_columns, 
 		number_of_pyramids);
     
   divide_gauss_pyramid_on_dev(arr_pyramid, base_rows, base_columns, 
     number_of_pyramids, pyramid_max);
+  if (isMatrixOutputEnabled) {
+    fprintf(output_file, "--- after ---\n");
+    print_host_gauss_piramid(arr_pyramid, base_rows, base_columns, number_of_pyramids);
+  }
 
   free_gauss_pyramid(arr_pyramid, number_of_pyramids);
 }
@@ -79,7 +90,7 @@ void test_3() {
 
 void run_tests() {
   srand(time(0));
-  // test_gauss_pyramid_max();
+  test_gauss_pyramid_max();
   TIMED_FUNCTION(test_1());
   TIMED_FUNCTION(test_2());
   TIMED_FUNCTION(test_3());
