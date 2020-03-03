@@ -43,8 +43,8 @@ void test_alg(size_t base_rows, size_t base_columns,
     fprintf(output_file, "* %s\n", test_name);
 
   int **arr_pyramid = make_gauss_pyramid(base_rows, base_columns, number_of_pyramids);
-  fprintf(output_file, "--- before ---\n");
   if (isMatrixOutputEnabled) {
+    fprintf(output_file, "--- before ---\n");
     print_host_gauss_piramid(arr_pyramid, base_rows, base_columns, number_of_pyramids);
   }
 
@@ -63,9 +63,19 @@ void test_alg(size_t base_rows, size_t base_columns,
   }
 
   free_gauss_pyramid(arr_pyramid, number_of_pyramids);
+  // fprintf(stderr,"GPU last error: %d\n", cudaGetLastError());
 }
 
 void test_1() {
+  test_alg(
+    (size_t)pow(2, 11),
+    (size_t)pow(2, 11),
+    6,
+    "test alg with 2^11 rows and 2^11 columns for 6 level gauss pyramid"
+  );
+}
+
+void test_2() {
   test_alg(
     (size_t)pow(2, 12),
     (size_t)pow(2, 12),
@@ -74,7 +84,7 @@ void test_1() {
   );
 }
 
-void test_2() {
+void test_3() {
   test_alg(
     (size_t)pow(2, 13),
     (size_t)pow(2, 13),
@@ -83,7 +93,8 @@ void test_2() {
   );
 }
 
-void test_3() {
+
+void test_4() {
   test_alg(
     (size_t)pow(2, 14),
     (size_t)pow(2, 14),
